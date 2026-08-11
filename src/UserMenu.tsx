@@ -64,7 +64,7 @@ export function UserMenu({
 
   return (
     <div ref={wrapperRef} className={wrapperCls}>
-      <button onClick={handleTriggerClick} className={triggerBtnCls}>
+      <button type="button" onClick={handleTriggerClick} className={triggerBtnCls}>
         {userName}
       </button>
       {open && (
@@ -75,12 +75,12 @@ export function UserMenu({
             </a>
           ))}
           {showThemeToggle && (
-            <button onClick={handleThemeToggleClick} className={themeBtnCls}>
+            <button type="button" onClick={handleThemeToggleClick} className={themeBtnCls}>
               <ThemeIcon isDark={isDark} />
               {isDark ? "Light mode" : "Dark mode"}
             </button>
           )}
-          <button onClick={signOut} className={menuItemCls}>
+          <button type="button" onClick={signOut} className={menuItemCls}>
             Sign out
           </button>
         </div>
