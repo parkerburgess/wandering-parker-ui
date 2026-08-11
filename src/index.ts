@@ -7,3 +7,4 @@ export { Select } from "./Select";
 export { PasswordInput } from "./PasswordInput";
 export { Badge } from "./Badge";
 export { Card } from "./Card";
+export { Modal } from "./Modal";
