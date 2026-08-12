@@ -1,5 +1,7 @@
 export { UserMenu } from "./UserMenu";
 export { useSignOut } from "./useSignOut";
+export { useSlowRequestNotice } from "./useSlowRequestNotice";
+export { SlowRequestNotice } from "./SlowRequestNotice";
 export { Button } from "./Button";
 export { Input } from "./Input";
 export { Textarea } from "./Textarea";
