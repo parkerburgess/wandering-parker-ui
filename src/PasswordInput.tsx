@@ -16,12 +16,12 @@ export function PasswordInput({
   const inputWrapperCls = "relative";
   const baseInputCls =
     "w-full px-3 py-2 pr-10 border border-neutral-300 rounded-lg placeholder-neutral-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent";
-  const errorInputCls = "border-incorrect-500";
+    "focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent";
+  const errorInputCls = "border-danger-600";
   const toggleBtnCls =
     "absolute right-2 top-1/2 -translate-y-1/2 text-neutral-500 " +
     "hover:text-neutral-700 text-sm px-1 cursor-pointer";
-  const errorTextCls = "text-sm text-incorrect-600";
+  const errorTextCls = "text-sm text-danger-700";
   // #endregion
 
   return (

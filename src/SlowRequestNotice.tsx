@@ -7,8 +7,8 @@ export function SlowRequestNotice({
 }) {
   // #region Tailwind utility consts
   const baseNoticeCls =
-    "flex items-center gap-2 rounded-lg border border-caution-200 bg-caution-100 px-3 py-2 text-sm text-caution-800";
-  const spinnerCls = "h-4 w-4 shrink-0 animate-spin text-caution-600";
+    "flex items-center gap-2 rounded-lg border border-warning-200 bg-warning-100 px-3 py-2 text-sm text-warning-800";
+  const spinnerCls = "h-4 w-4 shrink-0 animate-spin text-warning-600";
   // #endregion
 
   if (!message) return null;

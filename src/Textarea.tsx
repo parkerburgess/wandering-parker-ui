@@ -11,9 +11,9 @@ export function Textarea({
   const labelCls = "block text-sm font-medium text-neutral-700";
   const baseTextareaCls =
     "w-full px-3 py-2 border border-neutral-300 rounded-lg placeholder-neutral-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent";
-  const errorTextareaCls = "border-incorrect-500";
-  const errorTextCls = "text-sm text-incorrect-600";
+    "focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent";
+  const errorTextareaCls = "border-danger-600";
+  const errorTextCls = "text-sm text-danger-700";
   // #endregion
 
   return (

@@ -1,16 +1,16 @@
-type Color = "brand" | "correct" | "caution" | "incorrect" | "neutral";
+type Color = "primary" | "success" | "warning" | "danger" | "neutral";
 
 const colorCls: Record<Color, string> = {
-  brand: "bg-brand-100 text-brand-800",
-  correct: "bg-correct-100 text-correct-800",
-  caution: "bg-caution-100 text-caution-800",
-  incorrect: "bg-incorrect-100 text-incorrect-700",
+  primary: "bg-primary-100 text-primary-800",
+  success: "bg-success-100 text-success-800",
+  warning: "bg-warning-100 text-warning-800",
+  danger: "bg-danger-100 text-danger-800",
   neutral: "bg-neutral-100 text-neutral-800",
 };
 
 export function Badge({
   children,
-  color = "brand",
+  color = "primary",
 }: {
   children: React.ReactNode;
   color?: Color;
