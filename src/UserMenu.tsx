@@ -63,7 +63,7 @@ export function UserMenu({
   }
 
   return (
-    <div ref={wrapperRef} className={wrapperCls}>
+    <div id="wp-user-menu" ref={wrapperRef} className={wrapperCls}>
       <button type="button" onClick={handleTriggerClick} className={triggerBtnCls}>
         {userName}
       </button>

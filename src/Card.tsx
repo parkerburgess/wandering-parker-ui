@@ -5,5 +5,7 @@ export function Card({ className = "", ...props }: HTMLAttributes<HTMLDivElement
   const baseCardCls = "bg-card rounded-xl shadow-sm border border-neutral-200 p-6";
   // #endregion
 
-  return <div className={`${baseCardCls} ${className}`} {...props} />;
+  return (
+    <div id="wp-card" className={`${baseCardCls} ${className}`} {...props} />
+  );
 }

@@ -25,7 +25,7 @@ export function PasswordInput({
   // #endregion
 
   return (
-    <div className={wrapperCls}>
+    <div id="wp-password-input" className={wrapperCls}>
       {label && (
         <label htmlFor={props.id} className={labelCls}>
           {label}

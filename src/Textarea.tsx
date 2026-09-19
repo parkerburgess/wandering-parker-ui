@@ -17,7 +17,7 @@ export function Textarea({
   // #endregion
 
   return (
-    <div className={wrapperCls}>
+    <div id="wp-textarea" className={wrapperCls}>
       {label && (
         <label htmlFor={props.id} className={labelCls}>
           {label}

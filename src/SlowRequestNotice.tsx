@@ -14,7 +14,11 @@ export function SlowRequestNotice({
   if (!message) return null;
 
   return (
-    <div role="status" className={`${baseNoticeCls} ${className ?? ""}`}>
+    <div
+      id="wp-slow-request-notice"
+      role="status"
+      className={`${baseNoticeCls} ${className ?? ""}`}
+    >
       <svg
         className={spinnerCls}
         viewBox="0 0 24 24"

@@ -59,6 +59,7 @@ export function Modal({
 
   return (
     <div
+      id="wp-modal"
       ref={backdropRef}
       className={backdropCls}
       role="dialog"

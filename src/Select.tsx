@@ -22,7 +22,7 @@ export function Select({
   // #endregion
 
   return (
-    <div className={wrapperCls}>
+    <div id="wp-select" className={wrapperCls}>
       {label && (
         <label htmlFor={props.id} className={labelCls}>
           {label}

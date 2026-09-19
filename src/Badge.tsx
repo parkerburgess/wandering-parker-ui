@@ -20,5 +20,9 @@ export function Badge({
     "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
   // #endregion
 
-  return <span className={`${baseBadgeCls} ${colorCls[color]}`}>{children}</span>;
+  return (
+    <span id="wp-badge" className={`${baseBadgeCls} ${colorCls[color]}`}>
+      {children}
+    </span>
+  );
 }

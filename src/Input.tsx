@@ -17,7 +17,7 @@ export function Input({
   // #endregion
 
   return (
-    <div className={wrapperCls}>
+    <div id="wp-input" className={wrapperCls}>
       {label && (
         <label htmlFor={props.id} className={labelCls}>
           {label}
