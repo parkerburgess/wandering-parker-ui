@@ -41,11 +41,16 @@ export function UserMenu({
   // #region Tailwind utility consts
   const wrapperCls = "relative";
   const triggerBtnCls =
-    "text-sm border border-neutral-300 rounded-lg px-3 py-1.5 " +
+    "text-sm border border-primary-600 rounded-lg px-3 py-1.5 " +
     "text-neutral-600 hover:bg-neutral-50 transition cursor-pointer";
+  // Same two-layer treatment as Card: a tight 1px ring plus a wide diffuse
+  // halo, both in one arbitrary value since Tailwind needs the complete
+  // class name in source text to generate it.
+  const dropdownGlowCls =
+    "shadow-[0_0_0_1px_color-mix(in_oklch,var(--primary)_20%,transparent),0_0_24px_4px_color-mix(in_oklch,var(--primary)_35%,transparent)]";
   const dropdownCls =
-    "absolute right-0 top-full mt-1 bg-card border border-neutral-200 " +
-    "rounded-lg shadow-md z-20 min-w-max overflow-hidden";
+    `absolute right-0 top-full mt-1 bg-card border border-primary-600 ` +
+    `rounded-lg z-20 min-w-max overflow-hidden ${dropdownGlowCls}`;
   const menuItemCls =
     "block w-full text-left px-4 py-2.5 text-sm text-neutral-600 " +
     "hover:bg-neutral-50 cursor-pointer";

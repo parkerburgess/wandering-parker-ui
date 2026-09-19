@@ -48,9 +48,14 @@ export function Modal({
 
   // #region Tailwind utility consts
   const backdropCls = "fixed inset-0 bg-black/50 flex items-center justify-center z-50";
+  // Same two-layer treatment as the user-menu dropdown: a tight 1px ring
+  // plus a wide diffuse halo, both in one arbitrary value since Tailwind
+  // needs the complete class name in source text to generate it.
+  const modalGlowCls =
+    "shadow-[0_0_0_1px_color-mix(in_oklch,var(--primary)_20%,transparent),0_0_24px_4px_color-mix(in_oklch,var(--primary)_35%,transparent)]";
   const cardCls =
-    `bg-card rounded-lg shadow-xl w-full mx-4 max-h-[90vh] overflow-y-auto ` +
-    `${sizeCls[size]} ${noPadding ? "" : "p-6"}`;
+    `bg-card rounded-lg border border-primary-600 w-full mx-4 max-h-[90vh] overflow-y-auto ` +
+    `${modalGlowCls} ${sizeCls[size]} ${noPadding ? "" : "p-6"}`;
   // #endregion
 
   function handleBackdropClick(e: React.MouseEvent) {

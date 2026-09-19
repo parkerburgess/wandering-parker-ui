@@ -10,8 +10,9 @@ export function Textarea({
   const wrapperCls = "space-y-1";
   const labelCls = "block text-sm font-medium text-neutral-700";
   const baseTextareaCls =
-    "w-full px-3 py-2 border border-neutral-300 rounded-lg placeholder-neutral-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent";
+    "w-full px-3 py-2 border border-primary-600 rounded-lg placeholder-neutral-400 " +
+    "focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent " +
+    "disabled:bg-neutral-200 disabled:text-neutral-500 disabled:cursor-not-allowed";
   const errorTextareaCls = "border-danger-600";
   const errorTextCls = "text-sm text-danger-700";
   // #endregion

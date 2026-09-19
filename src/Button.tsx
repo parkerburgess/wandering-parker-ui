@@ -23,6 +23,7 @@ export function Button({
   return (
     <button
       id="wp-button"
+      data-variant={variant}
       className={`${baseBtnCls} ${variantCls[variant]} ${className}`}
       {...props}
     />
