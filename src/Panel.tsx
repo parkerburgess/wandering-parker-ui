@@ -17,7 +17,13 @@ export function Panel({
   const panelCls = "grid grid-rows-[auto_1fr] min-h-0 h-full gap-3";
   const titleCls =
     "text-sm font-semibold uppercase tracking-wide text-neutral-500";
-  const bodyCls = "grid content-start gap-3 min-h-0 overflow-y-auto pr-1";
+  // A scrollbar eats into the content box on one side only, which leaves
+  // children flush against the left edge but inset on the right. Reserving the
+  // gutter on both edges keeps that inset symmetric whether or not the
+  // scrollbar is actually showing, so content never shifts as the list grows.
+  const bodyCls =
+    "grid content-start gap-3 min-h-0 overflow-y-auto " +
+    "[scrollbar-gutter:stable_both-edges] [scrollbar-width:thin]";
   // #endregion
 
   return (
