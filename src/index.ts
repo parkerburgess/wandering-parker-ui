@@ -11,4 +11,5 @@ export { Select } from "./Select";
 export { PasswordInput } from "./PasswordInput";
 export { Badge } from "./Badge";
 export { Card } from "./Card";
+export { Panel } from "./Panel";
 export { Modal } from "./Modal";
