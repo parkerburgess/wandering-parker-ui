@@ -1,3 +1,5 @@
+export { ThemeProvider, useTheme } from "./ThemeProvider";
+export type { Theme, ResolvedTheme } from "./ThemeProvider";
 export { UserMenu } from "./UserMenu";
 export { useSignOut } from "./useSignOut";
 export { useSlowRequestNotice } from "./useSlowRequestNotice";

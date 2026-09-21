@@ -1,0 +1,236 @@
+/* Tailwind v4's automatic content scanner skips node_modules, so classes
+   used inside this package's own components never get generated unless
+   explicitly pointed at here. */
+@source "./src/**/*.{ts,tsx}";
+
+:root {
+  /* Base colors — change these to retheme the app */
+  --primary: #FA4616;
+  --neutral: #001489;
+  --success: #16a34a;
+  --danger: #ef4444;
+  --warning: #ca8a04;
+
+  /* Surface backgrounds (light mode) */
+  --surface: color-mix(in oklch, var(--neutral) 8%, white);
+  --card: #ffffff;
+  --subtle: color-mix(in oklch, var(--neutral) 4%, white);
+
+  /* Body foreground — resolves through neutral-800, flips in dark mode */
+  --foreground: var(--neutral-800);
+
+  /* Foreground pairs — the text/icon color to place ON a solid fill, so a
+     component never hardcodes white and never breaks when a base color is
+     re-themed. Tinted rather than pure white so they read as part of the
+     palette. Each is paired with its -700 stop, not -600: white text on
+     any of the raw -600 values falls under WCAG AA (2.94:1 on warning),
+     while every -700 clears it. No dark-mode override is needed, since
+     the dark block never redefines a -700. */
+  --primary-foreground: color-mix(in oklch, var(--primary) 6%, white);
+  --success-foreground: color-mix(in oklch, var(--success) 6%, white);
+  --danger-foreground: color-mix(in oklch, var(--danger) 6%, white);
+  --warning-foreground: color-mix(in oklch, var(--warning) 6%, white);
+
+  /* Solid-fill pairs — the background of a filled control and its hover.
+     These exist because the numeric scale cannot express a fill: only -600
+     and -700 are mode-stable, while -50, -100 and -800 are all inverted by
+     the dark block. -800 in particular is dual-role, since the theme also
+     uses it as TEXT on a tinted chip (see Badge's bg-X-100 text-X-800), so
+     the dark block flips it light — which made it unusable as a hover fill
+     and rendered near-white text on a near-white button.
+
+     So these are deliberately mode-stable: no html.dark override. Hover
+     darkens in both modes. Lightening in dark mode was the other option and
+     was rejected on measurement — it drops warning to 4.16:1, under AA,
+     while darkening keeps all four families between 8.5:1 and 10.2:1
+     against their -foreground. */
+  --primary-fill: var(--primary-700);
+  --primary-fill-hover: color-mix(in oklch, var(--primary) 60%, black);
+  --success-fill: var(--success-700);
+  --success-fill-hover: color-mix(in oklch, var(--success) 60%, black);
+  --danger-fill: var(--danger-700);
+  --danger-fill-hover: color-mix(in oklch, var(--danger) 60%, black);
+  --warning-fill: var(--warning-700);
+  --warning-fill-hover: color-mix(in oklch, var(--warning) 60%, black);
+
+  /* Primary palette */
+  --primary-50: color-mix(in oklch, var(--primary) 8%, white);
+  --primary-100: color-mix(in oklch, var(--primary) 18%, white);
+  --primary-300: color-mix(in oklch, var(--primary) 48%, white);
+  --primary-400: color-mix(in oklch, var(--primary) 65%, white);
+  --primary-600: var(--primary);
+  --primary-700: color-mix(in oklch, var(--primary) 80%, black);
+  --primary-800: color-mix(in oklch, var(--primary) 60%, black);
+
+  /* Neutral palette */
+  --neutral-50: color-mix(in oklch, var(--neutral) 5%, white);
+  --neutral-100: color-mix(in oklch, var(--neutral) 12%, white);
+  --neutral-200: color-mix(in oklch, var(--neutral) 24%, white);
+  --neutral-300: color-mix(in oklch, var(--neutral) 38%, white);
+  --neutral-400: color-mix(in oklch, var(--neutral) 55%, white);
+  --neutral-500: color-mix(in oklch, var(--neutral) 70%, white);
+  --neutral-600: color-mix(in oklch, var(--neutral) 85%, white);
+  --neutral-700: var(--neutral);
+  --neutral-800: color-mix(in oklch, var(--neutral) 75%, black);
+  --neutral-900: color-mix(in oklch, var(--neutral) 50%, black);
+
+  /* Success palette */
+  --success-50: color-mix(in oklch, var(--success) 6%, white);
+  --success-100: color-mix(in oklch, var(--success) 15%, white);
+  --success-300: color-mix(in oklch, var(--success) 50%, white);
+  --success-400: color-mix(in oklch, var(--success) 65%, white);
+  --success-600: var(--success);
+  --success-700: color-mix(in oklch, var(--success) 80%, black);
+  --success-800: color-mix(in oklch, var(--success) 60%, black);
+
+  /* Danger palette — the raw hex now anchors at 600 like every other
+     family (it used to sit at 500, shifting the whole scale down a slot),
+     and the two dark stops now use the shared 80%/60% formula. */
+  --danger-50: color-mix(in oklch, var(--danger) 6%, white);
+  --danger-100: color-mix(in oklch, var(--danger) 14%, white);
+  --danger-300: color-mix(in oklch, var(--danger) 48%, white);
+  --danger-400: color-mix(in oklch, var(--danger) 65%, white);
+  --danger-600: var(--danger);
+  --danger-700: color-mix(in oklch, var(--danger) 80%, black);
+  --danger-800: color-mix(in oklch, var(--danger) 60%, black);
+
+  /* Warning palette — 50, 400 and 900 are new. Apps already referenced
+     those classes, but the stops were never defined here, so they
+     emitted no CSS at all. */
+  --warning-50: color-mix(in oklch, var(--warning) 10%, white);
+  --warning-100: color-mix(in oklch, var(--warning) 20%, white);
+  --warning-200: color-mix(in oklch, var(--warning) 32%, white);
+  --warning-300: color-mix(in oklch, var(--warning) 45%, white);
+  --warning-400: color-mix(in oklch, var(--warning) 60%, white);
+  --warning-600: var(--warning);
+  --warning-700: color-mix(in oklch, var(--warning) 80%, black);
+  --warning-800: color-mix(in oklch, var(--warning) 60%, black);
+  --warning-900: color-mix(in oklch, var(--warning) 45%, black);
+}
+
+/* Dark mode — triggered by an ancestor with class "dark" on <html>.
+   Each app decides how that class gets set (e.g. next-themes); this
+   package only supplies the values, not the toggle mechanism. */
+html.dark {
+  /* Surface backgrounds */
+  --surface: color-mix(in oklch, var(--neutral) 40%, black);
+  --card: color-mix(in oklch, var(--neutral) 57%, black);
+  --subtle: color-mix(in oklch, var(--neutral) 50%, black);
+
+  /* Neutral — hover/interactive backgrounds (darker) */
+  --neutral-50: color-mix(in oklch, var(--neutral) 63%, black);
+  --neutral-100: color-mix(in oklch, var(--neutral) 71%, black);
+
+  /* Neutral — borders (dark but still visible) */
+  --neutral-200: color-mix(in oklch, var(--neutral) 78%, black);
+  --neutral-300: color-mix(in oklch, var(--neutral) 86%, black);
+
+  /* Neutral — text (flipped to light) */
+  --neutral-400: color-mix(in oklch, var(--neutral) 69%, white);
+  --neutral-500: color-mix(in oklch, var(--neutral) 54%, white);
+  --neutral-600: color-mix(in oklch, var(--neutral) 43%, white);
+  --neutral-700: color-mix(in oklch, var(--neutral) 31%, white);
+  --neutral-800: color-mix(in oklch, var(--neutral) 20%, white);
+  --neutral-900: color-mix(in oklch, var(--neutral) 11%, white);
+
+  /* Primary — light shades invert for dark backgrounds */
+  --primary-50: color-mix(in oklch, var(--primary) 30%, black);
+  --primary-100: color-mix(in oklch, var(--primary) 42%, black);
+  --primary-800: color-mix(in oklch, var(--primary) 25%, white);
+
+  /* Success — light shades invert */
+  --success-50: color-mix(in oklch, var(--success) 28%, black);
+  --success-100: color-mix(in oklch, var(--success) 38%, black);
+  --success-800: color-mix(in oklch, var(--success) 28%, white);
+
+  /* Danger — light shades invert. The old --incorrect-700 override lives
+     on here as -800, which is the slot every other family overrides. */
+  --danger-50: color-mix(in oklch, var(--danger) 25%, black);
+  --danger-100: color-mix(in oklch, var(--danger) 35%, black);
+  --danger-800: color-mix(in oklch, var(--danger) 35%, white);
+
+  /* Warning — shades invert */
+  --warning-50: color-mix(in oklch, var(--warning) 25%, black);
+  --warning-100: color-mix(in oklch, var(--warning) 32%, black);
+  --warning-200: color-mix(in oklch, var(--warning) 42%, black);
+  --warning-300: color-mix(in oklch, var(--warning) 52%, black);
+  --warning-800: color-mix(in oklch, var(--warning) 22%, white);
+  --warning-900: color-mix(in oklch, var(--warning) 14%, white);
+}
+
+@theme {
+  --font-sans: Arial, Helvetica, sans-serif;
+
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-subtle: var(--subtle);
+
+  --color-primary-foreground: var(--primary-foreground);
+  --color-success-foreground: var(--success-foreground);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-primary-fill: var(--primary-fill);
+  --color-primary-fill-hover: var(--primary-fill-hover);
+  --color-success-fill: var(--success-fill);
+  --color-success-fill-hover: var(--success-fill-hover);
+  --color-danger-fill: var(--danger-fill);
+  --color-danger-fill-hover: var(--danger-fill-hover);
+  --color-warning-fill: var(--warning-fill);
+  --color-warning-fill-hover: var(--warning-fill-hover);
+
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+
+  --color-neutral-50: var(--neutral-50);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+
+  --color-success-50: var(--success-50);
+  --color-success-100: var(--success-100);
+  --color-success-300: var(--success-300);
+  --color-success-400: var(--success-400);
+  --color-success-600: var(--success-600);
+  --color-success-700: var(--success-700);
+  --color-success-800: var(--success-800);
+
+  --color-danger-50: var(--danger-50);
+  --color-danger-100: var(--danger-100);
+  --color-danger-300: var(--danger-300);
+  --color-danger-400: var(--danger-400);
+  --color-danger-600: var(--danger-600);
+  --color-danger-700: var(--danger-700);
+  --color-danger-800: var(--danger-800);
+
+  --color-warning-50: var(--warning-50);
+  --color-warning-100: var(--warning-100);
+  --color-warning-200: var(--warning-200);
+  --color-warning-300: var(--warning-300);
+  --color-warning-400: var(--warning-400);
+  --color-warning-600: var(--warning-600);
+  --color-warning-700: var(--warning-700);
+  --color-warning-800: var(--warning-800);
+  --color-warning-900: var(--warning-900);
+}
+
+body {
+  background: var(--surface);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+::placeholder {
+  opacity: 1;
+}
