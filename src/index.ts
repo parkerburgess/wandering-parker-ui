@@ -1,6 +1,8 @@
 export { ThemeProvider, useTheme } from "./ThemeProvider";
 export type { Theme, ResolvedTheme } from "./ThemeProvider";
 export { UserMenu } from "./UserMenu";
+export { PALETTES, DEFAULT_PALETTE, isPalette } from "./palettes";
+export type { Palette, PaletteOption } from "./palettes";
 export { useSignOut } from "./useSignOut";
 export { useSlowRequestNotice } from "./useSlowRequestNotice";
 export { SlowRequestNotice } from "./SlowRequestNotice";

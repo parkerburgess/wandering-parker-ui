@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSignOut } from "./useSignOut";
+import { PALETTES } from "./palettes";
+import type { Palette } from "./palettes";
 
 interface ExtraMenuItem {
   label: string;
@@ -13,6 +15,8 @@ interface UserMenuProps {
   extraItems?: ExtraMenuItem[];
   theme?: "light" | "dark";
   onToggleTheme?: () => void;
+  palette?: Palette;
+  onSelectPalette?: (next: Palette) => void;
 }
 
 export function UserMenu({
@@ -20,6 +24,8 @@ export function UserMenu({
   extraItems = [],
   theme,
   onToggleTheme,
+  palette,
+  onSelectPalette,
 }: UserMenuProps) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -37,6 +43,7 @@ export function UserMenu({
 
   const showThemeToggle = theme !== undefined && onToggleTheme !== undefined;
   const isDark = theme === "dark";
+  const showPalettePicker = palette !== undefined && onSelectPalette !== undefined;
 
   // #region Tailwind utility consts
   const wrapperCls = "relative";
@@ -55,6 +62,13 @@ export function UserMenu({
     "block w-full text-left px-4 py-2.5 text-sm text-neutral-600 " +
     "hover:bg-neutral-50 cursor-pointer";
   const themeBtnCls = `${menuItemCls} flex items-center gap-3`;
+  const paletteLabelCls =
+    "px-4 pt-2.5 pb-1 text-xs uppercase tracking-wide text-neutral-500";
+  const paletteBtnCls =
+    `${menuItemCls} grid grid-cols-[12px_1fr_14px] items-center gap-3`;
+  // Each swatch carries its own data-palette, which rescopes --primary to
+  // that palette's raw color (see theme.css).
+  const swatchCls = "size-3 rounded-full bg-[var(--primary)]";
   // #endregion
 
   function handleTriggerClick(e: React.MouseEvent) {
@@ -65,6 +79,13 @@ export function UserMenu({
   function handleThemeToggleClick(e: React.MouseEvent) {
     e.stopPropagation();
     onToggleTheme?.();
+  }
+
+  function handlePaletteClick(next: Palette) {
+    return function selectPalette(e: React.MouseEvent) {
+      e.stopPropagation();
+      onSelectPalette?.(next);
+    };
   }
 
   return (
@@ -79,6 +100,24 @@ export function UserMenu({
               {item.label}
             </a>
           ))}
+          {showPalettePicker && (
+            <>
+              <div className={paletteLabelCls}>Theme</div>
+              {PALETTES.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  aria-pressed={option.id === palette}
+                  onClick={handlePaletteClick(option.id)}
+                  className={paletteBtnCls}
+                >
+                  <span data-palette={option.id} className={swatchCls} />
+                  {option.label}
+                  {option.id === palette && <CheckIcon />}
+                </button>
+              ))}
+            </>
+          )}
           {showThemeToggle && (
             <button type="button" onClick={handleThemeToggleClick} className={themeBtnCls}>
               <ThemeIcon isDark={isDark} />
@@ -91,6 +130,14 @@ export function UserMenu({
         </div>
       )}
     </div>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
   );
 }
 

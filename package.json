@@ -16,6 +16,11 @@
     "src",
     "theme.css"
   ],
+  "scripts": {
+    "gen:palettes": "node scripts/gen-palettes.mjs",
+    "check:palettes": "node scripts/gen-palettes.mjs --check",
+    "prepublishOnly": "npm run check:palettes && tsc --noEmit"
+  },
   "peerDependencies": {
     "next": ">=16.0.0",
     "react": ">=19.0.0",

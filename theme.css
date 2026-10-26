@@ -3,13 +3,54 @@
    explicitly pointed at here. */
 @source "./src/**/*.{ts,tsx}";
 
-:root {
-  /* Base colors — change these to retheme the app */
+/* Base colors, one block per palette. Every rule with a [data-palette="x"]
+   selector is listed in UserMenu's Theme section, labelled by its
+   --palette-label. The one that also targets :root is the default. After
+   adding or changing a block, run `npm run gen:palettes` to regenerate
+   src/palettes.generated.ts (the Palette type comes from it).
+
+   ThemeProvider sets data-palette on <html>; the selectors are not scoped
+   to html so UserMenu's swatches can carry data-palette too and read each
+   palette's raw --primary. Only the five base vars rescope that way — the
+   derived stops below are resolved once, on :root. */
+:root,
+[data-palette="blue"] {
+  --palette-label: "Blue + Slate";
+  --primary: #2563EB;
+  --neutral: #64748B;
+  --success: #16A34A;
+  --danger: #DC2626;
+  --warning: #D97706;
+}
+
+[data-palette="orange"] {
+  --palette-label: "Orange + Navy";
   --primary: #FA4616;
   --neutral: #001489;
-  --success: #16a34a;
-  --danger: #ef4444;
+  --success: #15803D;
+  --danger: #DC2626;
   --warning: #ca8a04;
+}
+
+[data-palette="indigo"] {
+  --palette-label: "Indigo + Zinc";
+  --primary: #4F46E5;
+  --neutral: #71717A;
+  --success: #059669;
+  --danger: #E11D48;
+  --warning: #D97706;
+}
+
+[data-palette="emerald"] {
+  --palette-label: "Emerald + Stone";
+  --primary: #059669;
+  --neutral: #78716C;
+  --success: #15803D;
+  --danger: #DC2626;
+  --warning: #B45309;
+}
+
+:root {
 
   /* Surface backgrounds (light mode) */
   --surface: color-mix(in oklch, var(--neutral) 8%, white);

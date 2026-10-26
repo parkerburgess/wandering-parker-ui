@@ -8,11 +8,14 @@ import {
   useSyncExternalStore,
 } from "react";
 import { useServerInsertedHTML } from "next/navigation";
+import { DEFAULT_PALETTE, PALETTE_IDS, isPalette } from "./palettes";
+import type { Palette } from "./palettes";
 
 export type Theme = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
 
 const STORAGE_KEY = "theme";
+const PALETTE_STORAGE_KEY = "palette";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 /**
@@ -32,6 +35,10 @@ const NO_FLASH_SCRIPT = `
         window.matchMedia(${JSON.stringify(DARK_QUERY)}).matches);
     document.documentElement.classList.toggle("dark", isDark);
     document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+    var palette = localStorage.getItem(${JSON.stringify(PALETTE_STORAGE_KEY)});
+    if (${JSON.stringify(PALETTE_IDS)}.indexOf(palette) !== -1) {
+      document.documentElement.setAttribute("data-palette", palette);
+    }
   } catch (error) {}
 })();
 `;
@@ -45,6 +52,7 @@ let listeners: Array<() => void> = [];
  * returning the old value.
  */
 let inMemoryTheme: Theme | undefined;
+let inMemoryPalette: Palette | undefined;
 
 function notifyListeners(): void {
   for (const listener of listeners) {
@@ -88,11 +96,32 @@ function syncDocumentToStoredTheme(): void {
   applyToDocument(resolveTheme(readStoredTheme(), readSystemIsDark()));
 }
 
+function readStoredPalette(): Palette {
+  if (inMemoryPalette !== undefined) {
+    return inMemoryPalette;
+  }
+  try {
+    const stored = localStorage.getItem(PALETTE_STORAGE_KEY);
+    if (isPalette(stored)) {
+      return stored;
+    }
+  } catch {
+    // No readable storage just means there is no saved preference.
+  }
+  return DEFAULT_PALETTE;
+}
+
+function syncDocumentToStoredPalette(): void {
+  document.documentElement.setAttribute("data-palette", readStoredPalette());
+}
+
 function handleExternalChange(): void {
   // Another tab may have written a new preference, so the cached selection
   // is no longer authoritative.
   inMemoryTheme = undefined;
+  inMemoryPalette = undefined;
   syncDocumentToStoredTheme();
+  syncDocumentToStoredPalette();
   notifyListeners();
 }
 
@@ -128,6 +157,8 @@ type ThemeContextValue = {
   theme: Theme | undefined;
   resolvedTheme: ResolvedTheme | undefined;
   setTheme: (next: Theme) => void;
+  palette: Palette | undefined;
+  setPalette: (next: Palette) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -159,15 +190,34 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     notifyListeners();
   }, []);
 
+  const palette = useSyncExternalStore(
+    subscribe,
+    readStoredPalette,
+    getServerResolvedSnapshot
+  );
+
+  const setPalette = useCallback(function applySelectedPalette(next: Palette) {
+    inMemoryPalette = next;
+    try {
+      localStorage.setItem(PALETTE_STORAGE_KEY, next);
+    } catch {
+      // Unpersisted, but the page still changes for this session.
+    }
+    syncDocumentToStoredPalette();
+    notifyListeners();
+  }, []);
+
   const value = useMemo(
     function buildContextValue(): ThemeContextValue {
       return {
         theme: resolvedTheme === undefined ? undefined : readStoredTheme(),
         resolvedTheme,
         setTheme,
+        palette,
+        setPalette,
       };
     },
-    [resolvedTheme, setTheme]
+    [resolvedTheme, setTheme, palette, setPalette]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
