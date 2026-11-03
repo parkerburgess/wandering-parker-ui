@@ -12,42 +12,57 @@
    ThemeProvider sets data-palette on <html>; the selectors are not scoped
    to html so UserMenu's swatches can carry data-palette too and read each
    palette's raw --primary. Only the five base vars rescope that way — the
-   derived stops below are resolved once, on :root. */
+   derived stops below are resolved once, on :root.
+
+   Palettes are toned down from their source hex (kept inline): only
+   chroma is reduced — lightness and hue stay put — so the contrast
+   guarantees on the -700 fills below still hold. Brand colors drop to
+   65% chroma; semantic colors only to 80% so red/green/amber still read
+   as error/success/warning. */
 :root,
 [data-palette="blue"] {
   --palette-label: "Blue + Slate";
-  --primary: #2563EB;
+  --primary: oklch(from #2563EB l calc(c * 0.65) h);
+  --neutral: oklch(from #64748B l calc(c * 0.65) h);
+  --success: oklch(from #16A34A l calc(c * 0.8) h);
+  --danger: oklch(from #DC2626 l calc(c * 0.8) h);
+  --warning: oklch(from #D97706 l calc(c * 0.8) h);
+}
+
+/* Both base colors are already low-chroma, so no toning is applied. */
+[data-palette="gray"] {
+  --palette-label: "Gray + Slate";
+  --primary: #3F3F46;
   --neutral: #64748B;
-  --success: #16A34A;
-  --danger: #DC2626;
-  --warning: #D97706;
+  --success: oklch(from #059669 l calc(c * 0.8) h);
+  --danger: oklch(from #E11D48 l calc(c * 0.8) h);
+  --warning: oklch(from #D97706 l calc(c * 0.8) h);
 }
 
-[data-palette="orange"] {
-  --palette-label: "Orange + Navy";
-  --primary: #FA4616;
-  --neutral: #001489;
-  --success: #15803D;
-  --danger: #DC2626;
-  --warning: #ca8a04;
-}
-
-[data-palette="indigo"] {
-  --palette-label: "Indigo + Zinc";
-  --primary: #4F46E5;
-  --neutral: #71717A;
-  --success: #059669;
-  --danger: #E11D48;
-  --warning: #D97706;
+/* A dark gray primary vanishes against dark-mode surfaces, so lift it:
+   fills (-700) land near #52525B, which still carries white text at AA,
+   and -600 (link/accent text) goes lighter still to read on the cards. */
+html.dark[data-palette="gray"] {
+  --primary: #71717A;
+  --primary-600: #A1A1AA;
 }
 
 [data-palette="emerald"] {
   --palette-label: "Emerald + Stone";
-  --primary: #059669;
-  --neutral: #78716C;
-  --success: #15803D;
-  --danger: #DC2626;
-  --warning: #B45309;
+  --primary: oklch(from #059669 l calc(c * 0.65) h);
+  --neutral: oklch(from #78716C l calc(c * 0.65) h);
+  --success: oklch(from #15803D l calc(c * 0.8) h);
+  --danger: oklch(from #DC2626 l calc(c * 0.8) h);
+  --warning: oklch(from #B45309 l calc(c * 0.8) h);
+}
+
+[data-palette="orange"] {
+  --palette-label: "Orange + Navy";
+  --primary: oklch(from #FA4616 l calc(c * 0.65) h);
+  --neutral: oklch(from #001489 l calc(c * 0.65) h);
+  --success: oklch(from #15803D l calc(c * 0.8) h);
+  --danger: oklch(from #DC2626 l calc(c * 0.8) h);
+  --warning: oklch(from #ca8a04 l calc(c * 0.8) h);
 }
 
 :root {

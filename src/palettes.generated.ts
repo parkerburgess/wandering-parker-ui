@@ -3,7 +3,7 @@
 
 export const PALETTES = [
   { id: "blue", label: "Blue + Slate", isDefault: true },
-  { id: "orange", label: "Orange + Navy", isDefault: false },
-  { id: "indigo", label: "Indigo + Zinc", isDefault: false },
+  { id: "gray", label: "Gray + Slate", isDefault: false },
   { id: "emerald", label: "Emerald + Stone", isDefault: false },
+  { id: "orange", label: "Orange + Navy", isDefault: false },
 ] as const;
