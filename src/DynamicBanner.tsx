@@ -1,11 +1,11 @@
 // Keyboard-tile wordmark: renders `text` as one key tile per character,
 // themed with the palette tokens so it follows light/dark and the active
 // palette. Each app passes its own text; the rendering rules are shared.
-export type DynamicHeaderAccent = "word-initials" | "first" | "none";
+export type DynamicBannerAccent = "word-initials" | "first" | "none";
 
-export interface DynamicHeaderProps {
+export interface DynamicBannerProps {
   text: string;
-  accent?: DynamicHeaderAccent;
+  accent?: DynamicBannerAccent;
   className?: string;
 }
 
@@ -13,7 +13,7 @@ const FONT_STYLE = { fontFamily: '"Arial Black", "Arial", sans-serif' };
 
 // Which tile gets the primary accent, by the chosen rule.
 function isAccentTile(
-  accent: DynamicHeaderAccent,
+  accent: DynamicBannerAccent,
   wordIndex: number,
   charIndex: number,
 ): boolean {
@@ -22,7 +22,7 @@ function isAccentTile(
   return charIndex === 0;
 }
 
-export function DynamicHeader({ text, accent = "word-initials", className }: DynamicHeaderProps) {
+export function DynamicBanner({ text, accent = "word-initials", className }: DynamicBannerProps) {
   // #region Tailwind utility consts
   // Sized in `em` so the whole mark scales from one font-size set via
   // className; gaps are a constant typographic length, not width-relative.
@@ -41,7 +41,7 @@ export function DynamicHeader({ text, accent = "word-initials", className }: Dyn
 
   return (
     <span
-      id="wp-dynamic-header"
+      id="wp-dynamic-banner"
       className={rootCls}
       style={FONT_STYLE}
       role="img"

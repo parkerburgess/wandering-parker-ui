@@ -3,8 +3,6 @@ export type { Theme, ResolvedTheme } from "./ThemeProvider";
 export { UserMenu } from "./UserMenu";
 export { SiteNav } from "./SiteNav";
 export type { SiteNavItem } from "./SiteNav";
-export { DynamicHeader } from "./DynamicHeader";
-export type { DynamicHeaderProps, DynamicHeaderAccent } from "./DynamicHeader";
 export { Header } from "./Header";
 export type { HeaderProps } from "./Header";
 export { PALETTES, DEFAULT_PALETTE, isPalette } from "./palettes";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SiteNav } from "./SiteNav";
 import type { SiteNavItem } from "./SiteNav";
-import { DynamicHeader } from "./DynamicHeader";
+import { DynamicBanner } from "./DynamicBanner";
 import { HeaderUserMenu } from "./HeaderUserMenu";
 
 export interface HeaderProps {
@@ -35,7 +35,7 @@ export function Header({
     <header className={headerCls}>
       <div className={innerCls}>
         <Link href={brandHref} className={brandCls}>
-          <DynamicHeader text={brandText} className={wordmarkCls} />
+          <DynamicBanner text={brandText} className={wordmarkCls} />
         </Link>
         <div className={menuSlotCls}>
           {userName && <HeaderUserMenu userName={userName} />}
