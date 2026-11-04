@@ -1,6 +1,10 @@
 export { ThemeProvider, useTheme } from "./ThemeProvider";
 export type { Theme, ResolvedTheme } from "./ThemeProvider";
 export { UserMenu } from "./UserMenu";
+export { SiteNav } from "./SiteNav";
+export type { SiteNavItem } from "./SiteNav";
+export { DynamicHeader } from "./DynamicHeader";
+export type { DynamicHeaderProps, DynamicHeaderAccent } from "./DynamicHeader";
 export { PALETTES, DEFAULT_PALETTE, isPalette } from "./palettes";
 export type { Palette, PaletteOption } from "./palettes";
 export { useSignOut } from "./useSignOut";
