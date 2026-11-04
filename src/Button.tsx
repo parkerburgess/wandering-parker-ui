@@ -16,7 +16,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
   // #region Tailwind utility consts
   const baseBtnCls =
-    "px-4 py-2 rounded-lg font-medium transition-colors " +
+    "px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer " +
     "disabled:opacity-50 disabled:cursor-not-allowed";
   // #endregion
 
