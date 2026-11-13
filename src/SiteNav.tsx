@@ -12,6 +12,11 @@ export interface SiteNavItem {
    * highlighted on "/sessions/12".
    */
   match?: "exact" | "prefix";
+  /**
+   * "end" pushes the item to the right edge of the nav bar. Every item after
+   * the first "end" item goes along with it.
+   */
+  align?: "start" | "end";
 }
 
 interface SiteNavProps {
@@ -24,22 +29,27 @@ export function SiteNav({ items }: SiteNavProps) {
 
   // #region Tailwind utility consts
   const navCls = "bg-neutral-100 border-b border-neutral-400";
-  const innerCls =
-    "max-w-6xl mx-auto px-4 grid grid-flow-col auto-cols-max gap-8";
+  // Flex rather than grid so an "end" item's ml-auto can take up the slack.
+  const innerCls = "max-w-6xl mx-auto px-4 flex gap-8";
   const linkBaseCls =
     "py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer";
   const activeLinkCls = `${linkBaseCls} border-primary-600 text-neutral-900`;
   const inactiveLinkCls =
     `${linkBaseCls} border-transparent text-neutral-600 ` +
     "hover:text-neutral-900";
+  const endAlignCls = "ml-auto";
   // #endregion
+
+  const firstEndIndex = items.findIndex(isEndAligned);
 
   return (
     <nav id="wp-site-nav" className={navCls}>
       <div className={innerCls}>
-        {items.map((item) => {
+        {items.map((item, index) => {
           const isActive = isItemActive(item, pathname);
-          const linkCls = isActive ? activeLinkCls : inactiveLinkCls;
+          const stateCls = isActive ? activeLinkCls : inactiveLinkCls;
+          const linkCls =
+            index === firstEndIndex ? `${stateCls} ${endAlignCls}` : stateCls;
           const ariaCurrent = isActive ? "page" : undefined;
 
           // Other apps live on their own subdomains (and Contact links are
@@ -66,6 +76,10 @@ export function SiteNav({ items }: SiteNavProps) {
       </div>
     </nav>
   );
+}
+
+function isEndAligned(item: SiteNavItem): boolean {
+  return item.align === "end";
 }
 
 /**

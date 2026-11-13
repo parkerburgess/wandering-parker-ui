@@ -4,12 +4,16 @@ import type { SiteNavItem } from "./SiteNav";
 import { DynamicBanner } from "./DynamicBanner";
 import { HeaderUserMenu } from "./HeaderUserMenu";
 
+const DEFAULT_CONTACT_EMAIL = "parkerburgess@outlook.com";
+
 export interface HeaderProps {
   userName?: string;
   brandText: string;
   brandHref?: string;
   navItems: SiteNavItem[];
   headerBgCls?: string;
+  /** Address for the "Contact Me" item that ends every app's nav. */
+  contactEmail?: string;
 }
 
 export function Header({
@@ -18,7 +22,15 @@ export function Header({
   brandHref = "/",
   navItems,
   headerBgCls = "bg-[lightslategray]",
+  contactEmail = DEFAULT_CONTACT_EMAIL,
 }: HeaderProps) {
+  const contactItem: SiteNavItem = {
+    label: "Contact Me",
+    href: `mailto:${contactEmail}`,
+    align: "end",
+  };
+  const siteNavItems = [...navItems, contactItem];
+
   // #region Tailwind utility consts
   const headerCls = `${headerBgCls} sticky top-0 z-50`;
   // @container makes this the sizing reference for the banner's cqi units.
@@ -42,7 +54,7 @@ export function Header({
         </div>
       </div>
       {/* Signed-out visitors only see login/register, so nothing to navigate. */}
-      {userName && <SiteNav items={navItems} />}
+      {userName && <SiteNav items={siteNavItems} />}
     </header>
   );
 }
