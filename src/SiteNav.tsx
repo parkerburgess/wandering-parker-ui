@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 
 export interface SiteNavItem {
   label: string;
@@ -12,74 +13,66 @@ export interface SiteNavItem {
    * highlighted on "/sessions/12".
    */
   match?: "exact" | "prefix";
-  /**
-   * "end" pushes the item to the right edge of the nav bar. Every item after
-   * the first "end" item goes along with it.
-   */
-  align?: "start" | "end";
 }
 
 interface SiteNavProps {
   items: SiteNavItem[];
+  /** Rendered against the right edge of the bar (Header puts Contact Me here). */
+  endSlot?: ReactNode;
 }
 
 // Client component only so usePathname can mark the current page.
-export function SiteNav({ items }: SiteNavProps) {
+export function SiteNav({ items, endSlot }: SiteNavProps) {
   const pathname = usePathname();
 
   // #region Tailwind utility consts
   const navCls = "bg-neutral-100 border-b border-neutral-400";
-  // Flex rather than grid so an "end" item's ml-auto can take up the slack.
-  const innerCls = "max-w-6xl mx-auto px-4 flex gap-8";
+  // Two columns: the page links take the slack, the end slot hugs the right.
+  const innerCls = "max-w-6xl mx-auto px-4 grid grid-cols-[1fr_auto]";
+  const linksCls = "grid grid-flow-col auto-cols-max gap-8";
   const linkBaseCls =
     "py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer";
   const activeLinkCls = `${linkBaseCls} border-primary-600 text-neutral-900`;
   const inactiveLinkCls =
     `${linkBaseCls} border-transparent text-neutral-600 ` +
     "hover:text-neutral-900";
-  const endAlignCls = "ml-auto";
   // #endregion
-
-  const firstEndIndex = items.findIndex(isEndAligned);
 
   return (
     <nav id="wp-site-nav" className={navCls}>
       <div className={innerCls}>
-        {items.map((item, index) => {
-          const isActive = isItemActive(item, pathname);
-          const stateCls = isActive ? activeLinkCls : inactiveLinkCls;
-          const linkCls =
-            index === firstEndIndex ? `${stateCls} ${endAlignCls}` : stateCls;
-          const ariaCurrent = isActive ? "page" : undefined;
+        <div className={linksCls}>
+          {items.map((item) => {
+            const isActive = isItemActive(item, pathname);
+            const linkCls = isActive ? activeLinkCls : inactiveLinkCls;
+            const ariaCurrent = isActive ? "page" : undefined;
 
-          // Other apps live on their own subdomains (and Contact links are
-          // mailto:), so next/link's client-side routing doesn't apply.
-          if (isExternalHref(item.href)) {
+            // Absolute URLs and mailto: links leave the app, so next/link's
+            // client-side routing doesn't apply.
+            if (isExternalHref(item.href)) {
+              return (
+                <a key={item.href} href={item.href} className={linkCls}>
+                  {item.label}
+                </a>
+              );
+            }
+
             return (
-              <a key={item.href} href={item.href} className={linkCls}>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={linkCls}
+                aria-current={ariaCurrent}
+              >
                 {item.label}
-              </a>
+              </Link>
             );
-          }
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={linkCls}
-              aria-current={ariaCurrent}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
+          })}
+        </div>
+        {endSlot}
       </div>
     </nav>
   );
-}
-
-function isEndAligned(item: SiteNavItem): boolean {
-  return item.align === "end";
 }
 
 /**

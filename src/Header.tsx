@@ -3,8 +3,8 @@ import { SiteNav } from "./SiteNav";
 import type { SiteNavItem } from "./SiteNav";
 import { DynamicBanner } from "./DynamicBanner";
 import { HeaderUserMenu } from "./HeaderUserMenu";
-
-const DEFAULT_CONTACT_EMAIL = "parkerburgess@outlook.com";
+import { ContactMe } from "./ContactMe";
+import type { ContactConfig } from "./ContactMe";
 
 export interface HeaderProps {
   userName?: string;
@@ -12,8 +12,8 @@ export interface HeaderProps {
   brandHref?: string;
   navItems: SiteNavItem[];
   headerBgCls?: string;
-  /** Address for the "Contact Me" item that ends every app's nav. */
-  contactEmail?: string;
+  /** Adds the Contact Me button at the right end of the nav. */
+  contact?: ContactConfig;
 }
 
 export function Header({
@@ -22,14 +22,9 @@ export function Header({
   brandHref = "/",
   navItems,
   headerBgCls = "bg-[lightslategray]",
-  contactEmail = DEFAULT_CONTACT_EMAIL,
+  contact,
 }: HeaderProps) {
-  const contactItem: SiteNavItem = {
-    label: "Contact Me",
-    href: `mailto:${contactEmail}`,
-    align: "end",
-  };
-  const siteNavItems = [...navItems, contactItem];
+  const contactButton = contact ? <ContactMe {...contact} /> : undefined;
 
   // #region Tailwind utility consts
   const headerCls = `${headerBgCls} sticky top-0 z-50`;
@@ -54,7 +49,7 @@ export function Header({
         </div>
       </div>
       {/* Signed-out visitors only see login/register, so nothing to navigate. */}
-      {userName && <SiteNav items={siteNavItems} />}
+      {userName && <SiteNav items={navItems} endSlot={contactButton} />}
     </header>
   );
 }
