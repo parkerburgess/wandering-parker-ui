@@ -17,6 +17,19 @@ export type ResolvedTheme = "light" | "dark";
 const STORAGE_KEY = "theme";
 const PALETTE_STORAGE_KEY = "palette";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
+const THEMES: readonly Theme[] = ["light", "dark", "system"];
+
+/**
+ * The selection is persisted in cookies as well as localStorage, because
+ * localStorage is per-origin and each app lives on its own subdomain. On
+ * wanderingparker.com the cookies are scoped to the parent domain so every
+ * app sees them; anywhere else (localhost, previews) they stay host-only.
+ * Browsers ignore the port for cookies, so localhost apps share them too.
+ */
+const THEME_COOKIE = "wp_theme";
+const PALETTE_COOKIE = "wp_palette";
+const SHARED_COOKIE_DOMAIN = "wanderingparker.com";
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
 /**
  * Applies the stored theme before React hydrates, so the first paint is
@@ -25,18 +38,67 @@ const DARK_QUERY = "(prefers-color-scheme: dark)";
  * 19.2 dev-errors on script tags found inside a component tree, and a
  * client-rendered script would never execute anyway.
  */
+/**
+ * It mirrors readStoredValue and buildCookieAttributes below in ES5, because
+ * it runs as a plain string before any bundle loads. A localStorage value
+ * found without a cookie is copied into the cookie, so a choice made before
+ * the cookie existed still reaches the other apps.
+ */
 const NO_FLASH_SCRIPT = `
 (function () {
   try {
-    var stored = localStorage.getItem(${JSON.stringify(STORAGE_KEY)});
+    var shared = ${JSON.stringify(SHARED_COOKIE_DOMAIN)};
+    var host = location.hostname;
+    var isShared =
+      host === shared ||
+      host.slice(-(shared.length + 1)) === "." + shared;
+    var attributes =
+      "; Path=/; Max-Age=${COOKIE_MAX_AGE_SECONDS}; SameSite=Lax" +
+      (isShared ? "; Domain=." + shared : "") +
+      (location.protocol === "https:" ? "; Secure" : "");
+
+    function readCookie(name) {
+      var match = document.cookie.match(
+        new RegExp("(?:^|; )" + name + "=([^;]*)")
+      );
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function readStored(cookieName, storageKey, allowed) {
+      var fromCookie = readCookie(cookieName);
+      if (allowed.indexOf(fromCookie) !== -1) {
+        return fromCookie;
+      }
+      var fromStorage = null;
+      try {
+        fromStorage = localStorage.getItem(storageKey);
+      } catch (error) {}
+      if (allowed.indexOf(fromStorage) !== -1) {
+        document.cookie =
+          cookieName + "=" + encodeURIComponent(fromStorage) + attributes;
+        return fromStorage;
+      }
+      return null;
+    }
+
+    var theme = readStored(
+      ${JSON.stringify(THEME_COOKIE)},
+      ${JSON.stringify(STORAGE_KEY)},
+      ${JSON.stringify(THEMES)}
+    );
     var isDark =
-      stored === "dark" ||
-      ((!stored || stored === "system") &&
+      theme === "dark" ||
+      (theme !== "light" &&
         window.matchMedia(${JSON.stringify(DARK_QUERY)}).matches);
     document.documentElement.classList.toggle("dark", isDark);
     document.documentElement.style.colorScheme = isDark ? "dark" : "light";
-    var palette = localStorage.getItem(${JSON.stringify(PALETTE_STORAGE_KEY)});
-    if (${JSON.stringify(PALETTE_IDS)}.indexOf(palette) !== -1) {
+
+    var palette = readStored(
+      ${JSON.stringify(PALETTE_COOKIE)},
+      ${JSON.stringify(PALETTE_STORAGE_KEY)},
+      ${JSON.stringify(PALETTE_IDS)}
+    );
+    if (palette !== null) {
       document.documentElement.setAttribute("data-palette", palette);
     }
   } catch (error) {}
@@ -60,19 +122,82 @@ function notifyListeners(): void {
   }
 }
 
+function readCookie(name: string): string | null {
+  try {
+    const prefix = `${name}=`;
+    for (const pair of document.cookie.split("; ")) {
+      if (pair.startsWith(prefix)) {
+        return decodeURIComponent(pair.slice(prefix.length));
+      }
+    }
+  } catch {
+    // Cookies can be blocked (e.g. sandboxed frames); treat as unset.
+  }
+  return null;
+}
+
+function isSharedHost(hostname: string): boolean {
+  return (
+    hostname === SHARED_COOKIE_DOMAIN ||
+    hostname.endsWith(`.${SHARED_COOKIE_DOMAIN}`)
+  );
+}
+
+function buildCookieAttributes(): string {
+  const domain = isSharedHost(location.hostname)
+    ? `; Domain=.${SHARED_COOKIE_DOMAIN}`
+    : "";
+  const secure = location.protocol === "https:" ? "; Secure" : "";
+  return `; Path=/; Max-Age=${COOKIE_MAX_AGE_SECONDS}; SameSite=Lax${domain}${secure}`;
+}
+
+function writeCookie(name: string, value: string): void {
+  try {
+    document.cookie = `${name}=${encodeURIComponent(value)}${buildCookieAttributes()}`;
+  } catch {
+    // Unpersisted across apps, but localStorage and memory still hold it.
+  }
+}
+
+function readLocalStorage(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    // No readable storage just means there is no saved preference.
+    return null;
+  }
+}
+
+/**
+ * The shared cookie wins; localStorage is the fallback for preferences
+ * saved before the cookie existed. An unrecognized value in either place
+ * is skipped rather than trusted.
+ */
+function readStoredValue<T extends string>(
+  cookieName: string,
+  storageKey: string,
+  isValid: (value: string | null) => value is T
+): T | null {
+  const fromCookie = readCookie(cookieName);
+  if (isValid(fromCookie)) {
+    return fromCookie;
+  }
+  const fromStorage = readLocalStorage(storageKey);
+  if (isValid(fromStorage)) {
+    return fromStorage;
+  }
+  return null;
+}
+
+function isTheme(value: string | null): value is Theme {
+  return THEMES.includes(value as Theme);
+}
+
 function readStoredTheme(): Theme {
   if (inMemoryTheme !== undefined) {
     return inMemoryTheme;
   }
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "light" || stored === "dark" || stored === "system") {
-      return stored;
-    }
-  } catch {
-    // No readable storage just means there is no saved preference.
-  }
-  return "system";
+  return readStoredValue(THEME_COOKIE, STORAGE_KEY, isTheme) ?? "system";
 }
 
 function readSystemIsDark(): boolean {
@@ -100,15 +225,10 @@ function readStoredPalette(): Palette {
   if (inMemoryPalette !== undefined) {
     return inMemoryPalette;
   }
-  try {
-    const stored = localStorage.getItem(PALETTE_STORAGE_KEY);
-    if (isPalette(stored)) {
-      return stored;
-    }
-  } catch {
-    // No readable storage just means there is no saved preference.
-  }
-  return DEFAULT_PALETTE;
+  return (
+    readStoredValue(PALETTE_COOKIE, PALETTE_STORAGE_KEY, isPalette) ??
+    DEFAULT_PALETTE
+  );
 }
 
 function syncDocumentToStoredPalette(): void {
@@ -125,17 +245,30 @@ function handleExternalChange(): void {
   notifyListeners();
 }
 
+/**
+ * A change made in another app's tab updates the shared cookie but fires no
+ * event here (the storage event is per-origin, and there is no portable
+ * cookie-change event), so the selection is re-read on returning to the tab.
+ */
+function handleVisibilityChange(): void {
+  if (document.visibilityState === "visible") {
+    handleExternalChange();
+  }
+}
+
 function subscribe(onStoreChange: () => void): () => void {
   listeners.push(onStoreChange);
   const media = window.matchMedia(DARK_QUERY);
   media.addEventListener("change", handleExternalChange);
   // Fires only in OTHER tabs, which is exactly the cross-tab sync we want.
   window.addEventListener("storage", handleExternalChange);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   return function unsubscribe() {
     listeners = listeners.filter((listener) => listener !== onStoreChange);
     media.removeEventListener("change", handleExternalChange);
     window.removeEventListener("storage", handleExternalChange);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
   };
 }
 
@@ -181,6 +314,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = useCallback(function applySelectedTheme(next: Theme) {
     inMemoryTheme = next;
+    writeCookie(THEME_COOKIE, next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
@@ -198,6 +332,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setPalette = useCallback(function applySelectedPalette(next: Palette) {
     inMemoryPalette = next;
+    writeCookie(PALETTE_COOKIE, next);
     try {
       localStorage.setItem(PALETTE_STORAGE_KEY, next);
     } catch {
